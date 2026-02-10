@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Callable, Iterable, TypeVar
+from typing import Any, TypeVar
 
 
 class EventType(Enum):
