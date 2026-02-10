@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any
+from typing import Any, Callable, Iterable, TypeVar
 
 
 class EventType(Enum):
@@ -26,12 +26,26 @@ class Side(Enum):
 
 @dataclass(frozen=True)
 class Event:
-    """Base event with required metadata."""
+    """
+    Base event with required metadata.
+
+    Ordering policy:
+    1. 'ts_ms' ascending (millisecond precision)
+    2. 'seq_no' ascending (deterministic tie-break within same timestamp)
+    3. 'event_id' ascending (final stable tie-break)
+    """
 
     event_id: str
     ts_ms: int
     event_type: EventType
     payload: dict[str, Any] = field(default_factory=dict)
+    seq_no: int = 0
+
+    def __post_init__(self) -> None:
+        if self.ts_ms < 0:
+            raise ValueError("ts_ms must be non-negative")
+        if self.seq_no < 0:
+            raise ValueError("seq_no must be non-negative")
 
 
 @dataclass(frozen=True)
@@ -67,3 +81,28 @@ class Fill:
     sell_agent_id: str
     price: float
     size: float
+
+
+def event_sort_key(event: Event) -> tuple[int, int, str]:
+    """
+    Event ordering key for deterministic replay.
+    """
+    return (event.ts_ms, event.seq_no, event.event_id)
+
+
+StateT = TypeVar("StateT")
+
+
+def replay_events(
+    events: Iterable[Event],
+    reducer: Callable[[StateT, Event], StateT],
+    initial_state: StateT,
+) -> StateT:
+    """
+    Rebuild state from an event log using deterministic ordering.
+    """
+
+    state = initial_state
+    for event in sorted(events, key=event_sort_key):
+        state = reducer(state, event)
+    return state
