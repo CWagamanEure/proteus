@@ -1,0 +1,36 @@
+[tool.poetry]
+name = "proteus"
+version = "0.1.0"
+description = "Mechanism-pluggable market microstructure simulation framework"
+authors = ["Cory Wagamaneure <cory.wagamaneure@gmail.com>"]
+readme = "README.md"
+packages = [{ include = "proteus" }]
+
+[tool.poetry.dependencies]
+python = ">=3.11,<4.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.5"
+ruff = "^0.9.7"
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = "-q"
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+
+[build-system]
+requires = ["poetry-core>=1.9.0"]
+build-backend = "poetry.core.masonry.api"
