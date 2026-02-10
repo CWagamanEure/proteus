@@ -26,6 +26,7 @@
 - Estimate: M
 
 ### PT-002: Deterministic RNG stream manager
+- Status: complete (2026-02-10)
 - Problem: Common random numbers are required for fair treatment comparisons.
 - Scope: Implement seeded stream manager with child streams per subsystem (`latent`, `agents`, `latency`, etc.).
 - Acceptance criteria:

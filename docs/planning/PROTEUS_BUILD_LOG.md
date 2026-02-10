@@ -40,3 +40,20 @@
   - Implementations are stubs; no mechanism logic or strategy behavior exists yet.
   - No test suite yet beyond smoke execution.
 - Next ticket: PT-002
+
+### 2026-02-10
+- Ticket: PT-002
+- Definition of done:
+  - Implement deterministic stream manager with named child streams.
+  - Add tests for reproducibility, stream isolation, reset behavior, and repetition-seed derivation.
+  - Document seed protocol for experiment parity and reproducibility.
+- Test(s) to run:
+  - `poetry run pytest -q`
+  - `poetry run ruff check .`
+- What changed:
+  - Extended `proteus/core/rng.py` with persistent named streams, child-seed derivation, reset support, and `derive_repetition_seed`.
+  - Added RNG validation tests in `tests/test_rng_manager.py`.
+  - Added seed protocol documentation in `docs/PROTEUS_SEED_PROTOCOL.md`.
+- What broke / risks:
+  - End-to-end event-log/metric reproducibility checks remain to be added when runner emits richer artifacts.
+- Next ticket: PT-003

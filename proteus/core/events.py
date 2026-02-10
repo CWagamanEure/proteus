@@ -7,7 +7,7 @@ from enum import Enum
 from typing import Any
 
 
-class EventType(str, Enum):
+class EventType(Enum):
     NEWS = "news"
     ORDER = "order"
     CANCEL = "cancel"
@@ -19,7 +19,7 @@ class EventType(str, Enum):
     RFQ_ACCEPT = "rfq_accept"
 
 
-class Side(str, Enum):
+class Side(Enum):
     BUY = "buy"
     SELL = "sell"
 
