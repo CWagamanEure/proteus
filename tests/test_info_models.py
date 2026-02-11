@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from proteus.info.latent_process import BoundedLogOddsLatentProcess, JumpConfig
-from proteus.info.signal_model import AgentSignalConfig, HeterogenousSignalModel
+from proteus.info.signal_model import AgentSignalConfig, HeterogeneousSignalModel
 
 
 def test_latent_process_stays_bounded_with_noise_and_jumps() -> None:
@@ -32,7 +32,7 @@ def test_latent_process_supports_toggle_configurations() -> None:
 
 
 def test_signal_model_delay_and_noise_heterogeneity() -> None:
-    model = HeterogenousSignalModel(
+    model = HeterogeneousSignalModel(
         default=AgentSignalConfig(delay_ms=0, noise_stddev=0.0),
         per_agent={
             "fast": AgentSignalConfig(delay_ms=0, noise_stddev=0.0),

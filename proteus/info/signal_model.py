@@ -40,7 +40,7 @@ class AgentSignalConfig:
             raise ValueError("noise_stddev must be non-negative")
 
 
-class HeterogenousSignalModel(SignalModel):
+class HeterogeneousSignalModel(SignalModel):
     """
     Delayed and noisy observation model with per-agent heterogeneity
 
