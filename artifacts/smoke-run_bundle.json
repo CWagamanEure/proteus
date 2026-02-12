@@ -1,0 +1,132 @@
+{
+  "created_at_utc": "2026-02-12T00:02:53.196772+00:00",
+  "event_log": [
+    {
+      "event_id": "news-1",
+      "event_type": "news",
+      "payload": {
+        "p_t": 0.45
+      },
+      "seq_no": 0,
+      "ts_ms": 0
+    },
+    {
+      "event_id": "ord-1",
+      "event_type": "order",
+      "payload": {
+        "agent_id": "noise-1"
+      },
+      "seq_no": 0,
+      "ts_ms": 1
+    },
+    {
+      "event_id": "quote-1",
+      "event_type": "quote",
+      "payload": {
+        "ask": 0.46,
+        "ask_size": 12.0,
+        "bid": 0.44,
+        "bid_size": 10.0
+      },
+      "seq_no": 0,
+      "ts_ms": 1
+    },
+    {
+      "event_id": "fill-1-evt",
+      "event_type": "fill",
+      "payload": {
+        "fill_id": "fill-1"
+      },
+      "seq_no": 0,
+      "ts_ms": 2
+    }
+  ],
+  "fills": [
+    {
+      "buy_agent_id": "noise-1",
+      "fill_id": "fill-1",
+      "price": 0.46,
+      "sell_agent_id": "mm-1",
+      "size": 5.0,
+      "ts_ms": 2
+    }
+  ],
+  "mechanism": "clob",
+  "metrics": {
+    "market_depth_mean": 22.0,
+    "market_price_rmse": 0.010000000000000009,
+    "market_realized_volatility": NaN,
+    "market_shock_resilience_half_life_ms": NaN,
+    "market_spread_mean": 0.020000000000000018,
+    "mm_adverse_selection_loss": 0.0,
+    "mm_inventory_variance": 0.0,
+    "mm_max_drawdown": 0.0,
+    "mm_pnl": -0.19999999999999973,
+    "mm_sharpe": 0.0,
+    "trader_execution_error_rmse": 0.03999999999999998,
+    "trader_fill_probability": 1.0,
+    "trader_slippage_bps": 399.9999999999998,
+    "trader_time_to_execution_ms": 1
+  },
+  "scenario_id": "smoke-clob",
+  "schema_version": "1.0.0",
+  "seed": 7,
+  "summary_table": [
+    {
+      "metric": "market_depth_mean",
+      "value": 22.0
+    },
+    {
+      "metric": "market_price_rmse",
+      "value": 0.010000000000000009
+    },
+    {
+      "metric": "market_realized_volatility",
+      "value": NaN
+    },
+    {
+      "metric": "market_shock_resilience_half_life_ms",
+      "value": NaN
+    },
+    {
+      "metric": "market_spread_mean",
+      "value": 0.020000000000000018
+    },
+    {
+      "metric": "mm_adverse_selection_loss",
+      "value": 0.0
+    },
+    {
+      "metric": "mm_inventory_variance",
+      "value": 0.0
+    },
+    {
+      "metric": "mm_max_drawdown",
+      "value": 0.0
+    },
+    {
+      "metric": "mm_pnl",
+      "value": -0.19999999999999973
+    },
+    {
+      "metric": "mm_sharpe",
+      "value": 0.0
+    },
+    {
+      "metric": "trader_execution_error_rmse",
+      "value": 0.03999999999999998
+    },
+    {
+      "metric": "trader_fill_probability",
+      "value": 1.0
+    },
+    {
+      "metric": "trader_slippage_bps",
+      "value": 399.9999999999998
+    },
+    {
+      "metric": "trader_time_to_execution_ms",
+      "value": 1
+    }
+  ]
+}

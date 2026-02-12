@@ -1,0 +1,15 @@
+metric,value
+market_depth_mean,22.0
+market_price_rmse,0.010000000000000009
+market_realized_volatility,nan
+market_shock_resilience_half_life_ms,nan
+market_spread_mean,0.020000000000000018
+mm_adverse_selection_loss,0.0
+mm_inventory_variance,0.0
+mm_max_drawdown,0.0
+mm_pnl,-0.19999999999999973
+mm_sharpe,0.0
+trader_execution_error_rmse,0.03999999999999998
+trader_fill_probability,1.0
+trader_slippage_bps,399.9999999999998
+trader_time_to_execution_ms,1

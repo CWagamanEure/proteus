@@ -1,0 +1,4 @@
+{"event_id": "news-1", "event_type": "news", "payload": {"p_t": 0.45}, "seq_no": 0, "ts_ms": 0}
+{"event_id": "ord-1", "event_type": "order", "payload": {"agent_id": "noise-1"}, "seq_no": 0, "ts_ms": 1}
+{"event_id": "quote-1", "event_type": "quote", "payload": {"ask": 0.46, "ask_size": 12.0, "bid": 0.44, "bid_size": 10.0}, "seq_no": 0, "ts_ms": 1}
+{"event_id": "fill-1-evt", "event_type": "fill", "payload": {"fill_id": "fill-1"}, "seq_no": 0, "ts_ms": 2}
