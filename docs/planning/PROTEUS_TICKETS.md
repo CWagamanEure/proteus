@@ -16,6 +16,7 @@
 ## M0: Foundation + Validation
 
 ### PT-001: Repository skeleton + module contracts
+- Status: complete (2026-02-10)
 - Problem: The roadmap defines modules, but no enforceable interfaces.
 - Scope: Create package layout and abstract interfaces for `agents`, `mechanisms`, `metrics`, and event schemas.
 - Acceptance criteria:
@@ -37,6 +38,7 @@
 - Estimate: M
 
 ### PT-003: Time engine and event model
+- Status: complete (2026-02-12)
 - Problem: Simulation semantics (event-driven vs hybrid) are currently implicit.
 - Scope: Implement clock + typed events (`news`, `order`, `fill`, `batch_clear`, `rfq_request`, `rfq_quote`, `rfq_accept`).
 - Acceptance criteria:
@@ -47,6 +49,7 @@
 - Estimate: M
 
 ### PT-004: Accounting and invariant checks
+- Status: complete (2026-02-12)
 - Problem: Incorrect PnL/inventory accounting can invalidate all conclusions.
 - Scope: Build accounting engine and invariant test suite.
 - Acceptance criteria:
@@ -57,6 +60,7 @@
 - Estimate: M
 
 ### PT-005: Latent information process (`p_t`) + signal model
+- Status: complete (2026-02-12)
 - Problem: Core information model exists on paper but not in code.
 - Scope: Implement bounded log-odds process with noise + jumps and per-agent delayed/noisy observations.
 - Acceptance criteria:
@@ -67,6 +71,7 @@
 - Estimate: M
 
 ### PT-006: Metrics recorder and canonical output schema
+- Status: complete (2026-02-12)
 - Problem: Metrics are listed, but output format is undefined.
 - Scope: Implement mechanism-agnostic recorder and standardized result schema (per-run JSON/Parquet + summary table).
 - Acceptance criteria:
@@ -270,3 +275,105 @@
 6. PT-006
 7. PT-007
 8. PT-008
+
+## M4: Post-MVP DeFi + RL Extensions
+
+### PT-021: Mechanism cost model abstraction
+- Problem: Fee/gas/rebate assumptions are currently implicit and mechanism-specific.
+- Scope: Add `MechanismCostModel` abstraction for fees, gas, rebates, and policy-adjustable execution costs.
+- Acceptance criteria:
+  - Cost model is mechanism-agnostic and injected via config.
+  - Per-fill cost attribution is recorded in artifacts.
+  - Regression tests verify deterministic cost accounting by seed.
+- Dependencies: PT-006, PT-009
+- Estimate: M
+
+### PT-022: Settlement model abstraction (internal vs on-chain style)
+- Problem: Current accounting assumes immediate final settlement.
+- Scope: Add pluggable `SettlementModel` for delayed/final settlement semantics and settlement-state transitions.
+- Acceptance criteria:
+  - Supports immediate and delayed settlement modes.
+  - Accounting reconciles correctly under delayed settlement.
+  - Event log captures settlement lifecycle events.
+- Dependencies: PT-004, PT-006, PT-021
+- Estimate: M
+
+### PT-023: Incentive policy engine
+- Problem: Token incentives (emissions, staking rewards, penalties) are not represented.
+- Scope: Add `IncentivePolicy` module supporting time-varying rewards/penalties and policy schedules.
+- Acceptance criteria:
+  - Policy schedules can be configured per scenario.
+  - Incentive transfers are ledgered and auditable in artifacts.
+  - Scenario sweeps can vary policy without changing mechanism code.
+- Dependencies: PT-004, PT-006, PT-021
+- Estimate: L
+
+### PT-024: Agent policy interface split (strategy vs risk/capital constraints)
+- Problem: Agent strategy and capital constraints are coupled, limiting reuse and fair comparisons.
+- Scope: Separate agent decision policy from risk/capital constraint policy.
+- Acceptance criteria:
+  - Existing agent implementations migrate to split interfaces with no behavior regressions.
+  - Same strategy can run under multiple risk/capital policies.
+  - Unit tests cover constraint enforcement edge cases.
+- Dependencies: PT-008
+- Estimate: M
+
+### PT-025: Environment state extensions for DeFi microstructure
+- Problem: Oracle/mempool/block cadence state is missing from environment context.
+- Scope: Add optional `EnvironmentState` channels (oracle state, mempool visibility, block timing, congestion).
+- Acceptance criteria:
+  - State channels are explicitly versioned in schema.
+  - Agents can subscribe to selected channels without mechanism coupling.
+  - Determinism tests confirm identical environment traces for equal seeds.
+- Dependencies: PT-003, PT-005, PT-006
+- Estimate: L
+
+### PT-026: MM strategy lab (filters + quoting policy plugins)
+- Problem: MM strategy variants are not modular enough for controlled comparisons.
+- Scope: Add plugin-style MM filters (EWMA/Kalman) and quoting/risk policy modules.
+- Acceptance criteria:
+  - MM filters and quote policies are swappable via config.
+  - Baseline strategy can be frozen while testing one policy dimension at a time.
+  - Output artifacts include active strategy/policy metadata.
+- Dependencies: PT-008, PT-024
+- Estimate: M
+
+### PT-027: RL environment API + offline dataset export
+- Problem: No standardized interface exists for RL/self-play training.
+- Scope: Add environment API (`observe`, `act`, `step`) and trajectory export for offline RL.
+- Acceptance criteria:
+  - Rule-based and RL agents can run through the same policy interface.
+  - Trajectory datasets export with schema versioning and seed metadata.
+  - Deterministic replay validates action/state trajectory parity.
+- Dependencies: PT-006, PT-024, PT-025
+- Estimate: L
+
+### PT-028: Competition runner and leaderboard scoring
+- Problem: There is no canonical framework to compare many agent policies across mechanisms.
+- Scope: Build `CompetitionRunner` with season config, deterministic scenario packs, and scoring tables.
+- Acceptance criteria:
+  - Supports multi-agent matchups with fixed seed sets.
+  - Produces leaderboard outputs by profitability, market quality, and robustness.
+  - CI job runs a reduced competition smoke suite.
+- Dependencies: PT-011, PT-019, PT-026, PT-027
+- Estimate: M
+
+### PT-029: Policy sweep runner for incentive/mechanism A/B
+- Problem: Governance-style “change one rule and measure impact” workflows are manual.
+- Scope: Add policy sweep tooling for mechanism and incentive parameter A/B experiments.
+- Acceptance criteria:
+  - One command runs an A/B sweep with common seeds.
+  - Reports include winner/loser decomposition and risk diagnostics.
+  - Sweep metadata includes config hashes and policy version IDs.
+- Dependencies: PT-018, PT-023, PT-028
+- Estimate: M
+
+### PT-030: Stress and manipulation scenario suite
+- Problem: Robustness against adversarial behavior is not encoded as regression tests.
+- Scope: Add deterministic stress fixtures (oracle lag, latency spikes, spoof-like bursts, liquidity droughts).
+- Acceptance criteria:
+  - Stress suite runs in CI with golden-output diffing.
+  - Failures identify violated invariants and scenario IDs.
+  - Reports include robustness deltas per mechanism/policy.
+- Dependencies: PT-019, PT-025, PT-028
+- Estimate: M

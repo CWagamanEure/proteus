@@ -57,3 +57,19 @@
 - What broke / risks:
   - End-to-end event-log/metric reproducibility checks remain to be added when runner emits richer artifacts.
 - Next ticket: PT-003
+
+### 2026-02-12
+- Ticket: PT-006
+- Definition of done:
+  - Verify recorder emits event/fill logs and derived metrics with stable schema version.
+  - Verify non-negotiable metrics are present in the artifact bundle.
+  - Verify one command can generate run artifact bundle output.
+- Test(s) to run:
+  - `poetry run pytest -q tests/test_metrics_recorder.py`
+  - `python -m proteus.experiments.export_bundle --out-dir /tmp/proteus-pt006-check --run-id pt006-check`
+- What changed:
+  - Validated PT-006 acceptance criteria against existing implementation and tests.
+  - Marked PT-006 complete in ticket backlog and daily checklist.
+- What broke / risks:
+  - Parquet output remains optional and depends on local `pandas` + parquet engine availability.
+- Next ticket: PT-007

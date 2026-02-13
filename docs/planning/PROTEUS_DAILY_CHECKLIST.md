@@ -10,11 +10,11 @@ Use this once per day. Keep it to 10-20 minutes of planning max.
 - [ ] Log what changed and choose next ticket
 
 ## Suggested order (start here)
-- [ ] PT-001
-- [ ] PT-002
-- [ ] PT-003
-- [ ] PT-004
-- [ ] PT-005
-- [ ] PT-006
+- [x] PT-001
+- [x] PT-002
+- [x] PT-003
+- [x] PT-004
+- [x] PT-005
+- [x] PT-006
 - [ ] PT-007
 - [ ] PT-008
