@@ -90,3 +90,22 @@
 - What broke / risks:
   - Matching/price policy is deterministic and minimal; advanced microstructure details (amend/replace, IOC/FOK, hidden orders) are still out of scope.
 - Next ticket: PT-008
+
+### 2026-02-13
+- Ticket: PT-008
+- Definition of done:
+  - Implement v1 market maker with configurable reservation price and spread controls.
+  - Implement v1 informed trader thresholding with edge-scaled sizing.
+  - Implement v1 noise trader Poisson arrivals with random side/size and deterministic seeding.
+- Test(s) to run:
+  - `poetry run pytest -q tests/test_agents_v1.py`
+  - `poetry run pytest -q`
+  - `poetry run ruff check .`
+- What changed:
+  - Replaced agent stubs in `proteus/agents/market_maker.py`, `proteus/agents/informed.py`, and `proteus/agents/noise.py` with PT-008 behavior implementations.
+  - Added/validated PT-008 tests in `tests/test_agents_v1.py`.
+  - Fixed informed-trader threshold gating and corrected market-maker news-belief update condition.
+- What broke / risks:
+  - Agent policies are intentionally simple and event-payload-driven; richer state estimation and execution-awareness are deferred to later tickets.
+  - Current run loop integration still needs to exercise these agents in full scenario sweeps.
+- Next ticket: PT-009

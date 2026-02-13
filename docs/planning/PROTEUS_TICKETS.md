@@ -95,6 +95,7 @@
 - Estimate: L
 
 ### PT-008: Agent v1 implementations (MM, informed, noise)
+- Status: complete (2026-02-13)
 - Problem: Comparative experiments need consistent strategy definitions.
 - Scope: Implement v1 behavior specs from roadmap with shared policy interfaces.
 - Acceptance criteria:
