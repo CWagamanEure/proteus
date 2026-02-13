@@ -184,3 +184,28 @@ Research questions enabled:
 - How does leverage alter adverse selection and liquidity provision?
 - Which mechanisms are more robust under deleveraging shocks?
 - How do liquidation rules affect volatility and spread dynamics?
+
+## 10. Candidate post-M5 extensions
+
+These are intentionally exploratory and should be promoted to tickets only after
+M1-M5 priorities are stable.
+
+### 10.1 Agent behavior and adaptation
+- Memory and online learning policies (Bayesian/Kalman/EWMA) with bounded updates.
+- Endogenous participation (trade vs abstain) based on expected utility and risk budget.
+- Persistent latency classes (fast/slow cohorts) for fairness and queue-jump studies.
+
+### 10.2 Market environment realism
+- Regime-switching latent fundamentals (calm/shock state process).
+- Multi-asset extension with correlated contracts and cross-impact.
+- Richer order handling (IOC/FOK/post-only/pegged/amend semantics).
+
+### 10.3 Evaluation and identification
+- Welfare objective framework (trader surplus, maker surplus, volatility cost).
+- Structural estimation/calibration tooling against target moments.
+- Causal experiment templates with pre-registered hypotheses and power checks.
+
+### 10.4 Policy and resilience
+- Governance sandbox for fee/rebate/incentive/collateral/liquidation policy sweeps.
+- Deterministic failure-mode harness for liquidity runs and liquidation cascades.
+- Econometrics-ready panel exports keyed by `agent_uid`, run index, and event time.
