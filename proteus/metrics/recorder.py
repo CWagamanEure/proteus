@@ -11,10 +11,12 @@ from pathlib import Path
 from statistics import mean, pstdev, pvariance
 from typing import Any
 
+from proteus.agents.base import AgentDecisionDiagnostic
 from proteus.core.accounting import AccountingEngine
 from proteus.core.events import Event, EventType, Fill
+from proteus.metrics.research_metrics import compute_research_stub_metrics
 
-SCHEMA_VERSION = "1.0.0"
+SCHEMA_VERSION = "1.1.0"
 
 NON_NEGOTIABLE_METRICS: tuple[str, ...] = (
     "mm_pnl",
@@ -47,6 +49,7 @@ class RunArtifactBundle:
     created_at_utc: str
     event_log: list[dict[str, Any]]
     fills: list[dict[str, Any]]
+    agent_diagnostics: list[dict[str, Any]]
     metrics: dict[str, float]
     summary_table: list[dict[str, float]]
 
@@ -57,6 +60,7 @@ class Recorder:
 
     events: list[Event] = field(default_factory=list)
     fills: list[Fill] = field(default_factory=list)
+    agent_diagnostics: list[AgentDecisionDiagnostic] = field(default_factory=list)
 
     def record(self, event: Event) -> None:
         self.events.append(event)
@@ -64,9 +68,13 @@ class Recorder:
     def record_fill(self, fill: Fill) -> None:
         self.fills.append(fill)
 
+    def record_agent_diagnostic(self, diagnostic: AgentDecisionDiagnostic) -> None:
+        self.agent_diagnostics.append(diagnostic)
+
     def clear(self) -> None:
         self.events.clear()
         self.fills.clear()
+        self.agent_diagnostics.clear()
 
     def build_bundle(
         self,
@@ -79,6 +87,9 @@ class Recorder:
     ) -> RunArtifactBundle:
         event_log = [self._serialize_event(event) for event in self.events]
         fill_log = [self._serialize_fill(fill) for fill in self.fills]
+        diagnostics_log = [
+            self._serialize_agent_diagnostic(diagnostic) for diagnostic in self.agent_diagnostics
+        ]
         metrics = self._compute_metrics(
             mark_price=mark_price,
             adverse_selection_delta_ms=adverse_selection_delta_ms,
@@ -93,6 +104,7 @@ class Recorder:
             created_at_utc=datetime.now(tz=UTC).isoformat(),
             event_log=event_log,
             fills=fill_log,
+            agent_diagnostics=diagnostics_log,
             metrics=metrics,
             summary_table=summary,
         )
@@ -114,6 +126,7 @@ class Recorder:
         summary_path = out_dir / f"{resolved_run_id}_summary.csv"
         events_path = out_dir / f"{resolved_run_id}_events.jsonl"
         fills_path = out_dir / f"{resolved_run_id}_fills.jsonl"
+        diagnostics_path = out_dir / f"{resolved_run_id}_agent_diagnostics.jsonl"
 
         bundle_path.write_text(
             json.dumps(asdict(bundle), indent=2, sort_keys=True), encoding="utf-8"
@@ -124,6 +137,7 @@ class Recorder:
         self._write_summary_csv(summary_path, bundle.summary_table)
         self._write_jsonl(events_path, bundle.event_log)
         self._write_jsonl(fills_path, bundle.fills)
+        self._write_jsonl(diagnostics_path, bundle.agent_diagnostics)
 
         output_map: dict[str, Path] = {
             "bundle_json": bundle_path,
@@ -131,6 +145,7 @@ class Recorder:
             "summary_csv": summary_path,
             "events_jsonl": events_path,
             "fills_jsonl": fills_path,
+            "agent_diagnostics_jsonl": diagnostics_path,
         }
 
         if write_parquet:
@@ -182,6 +197,7 @@ class Recorder:
             adverse_selection_delta_ms=adverse_selection_delta_ms,
         )
         metrics.update(mm_metrics)
+        metrics.update(compute_research_stub_metrics(self.agent_diagnostics))
 
         return metrics
 
@@ -380,6 +396,19 @@ class Recorder:
             "sell_agent_id": fill.sell_agent_id,
             "price": fill.price,
             "size": fill.size,
+        }
+
+    def _serialize_agent_diagnostic(self, diagnostic: AgentDecisionDiagnostic) -> dict[str, Any]:
+        return {
+            "decision_id": diagnostic.decision_id,
+            "agent_id": diagnostic.agent_id,
+            "ts_ms": diagnostic.ts_ms,
+            "action_type": diagnostic.action_type,
+            "context": diagnostic.context,
+            "expected_value": diagnostic.expected_value,
+            "realized_value": diagnostic.realized_value,
+            "belief": diagnostic.belief,
+            "outcome": diagnostic.outcome,
         }
 
     def _write_summary_csv(self, path: Path, rows: list[dict[str, float]]) -> None:

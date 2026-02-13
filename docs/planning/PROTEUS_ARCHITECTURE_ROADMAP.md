@@ -147,3 +147,40 @@ Use factorial Monte Carlo with common seeds and confidence intervals for each tr
 3. Using one seed per scenario (high variance, unstable claims).
 4. Mixing objective truth `p_t` and market-consensus price in evaluation.
 5. Ignoring queue-position effects in CLOB while claiming fairness vs batch.
+
+## 9. Forward path: longitudinal agents + lending markets
+
+These are post-MVP extensions intended for economic research questions around adaptation,
+institutional memory, and credit cycles.
+
+### 9.1 Persistent agent identity across runs
+
+Goal: support panel-style studies where agents retain identity and state across episodes.
+
+Minimum requirements:
+- Stable `agent_uid` separate from per-run instance IDs.
+- Versioned agent profile schema (strategy family, risk constraints, capital state).
+- Optional carryover state at run boundaries (capital, inventory limits, learned params).
+- Explicit reset policy by experiment (`hard_reset`, `capital_only`, `full_carryover`).
+- Longitudinal artifact schema with run index and cohort metadata.
+
+Research questions enabled:
+- Do agent policies converge, cycle, or destabilize under repeated exposure?
+- How persistent are PnL/risk outcomes by agent type?
+- Does mechanism ranking change once agents have memory and adaptation?
+
+### 9.2 Lending market extension
+
+Goal: model credit supply, borrowing costs, margin constraints, and liquidation dynamics.
+
+Minimum requirements:
+- Credit account abstraction (cash, collateral, debt, health factor).
+- Borrow/lend event model and accrual process.
+- Interest-rate policy module (utilization curve or exogenous schedule).
+- Liquidation policy with deterministic trigger and penalty accounting.
+- Cross-market accounting invariants (spot + lending + settlement coherence).
+
+Research questions enabled:
+- How does leverage alter adverse selection and liquidity provision?
+- Which mechanisms are more robust under deleveraging shocks?
+- How do liquidation rules affect volatility and spread dynamics?

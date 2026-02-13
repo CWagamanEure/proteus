@@ -2,7 +2,7 @@
 
 ## Purpose
 Proteus is a mechanism-pluggable market microstructure simulation framework.
-Current state is early scaffold: interfaces and wiring exist, but most strategy/mechanism logic is still stubbed.
+Current state is foundation-plus-baseline: core simulation primitives are implemented, CLOB matching is live, and strategy layers are the main remaining gap.
 
 ## Read First
 1. `README.md` for basic dev commands.
@@ -12,13 +12,13 @@ Current state is early scaffold: interfaces and wiring exist, but most strategy/
 ## Project Layout
 - `proteus/core`: configs, clock, RNG, event schemas, smoke harness.
 - `proteus/info`: latent process and signal models.
-- `proteus/agents`: agent interfaces and placeholder agent classes.
-- `proteus/mechanisms`: mechanism interface plus CLOB/FBA/RFQ stubs.
+- `proteus/agents`: agent interfaces, placeholder agent classes, and decision-diagnostic schema hooks.
+- `proteus/mechanisms`: mechanism interface, implemented CLOB baseline, plus FBA/RFQ stubs.
 - `proteus/execution`: latency and information leakage policies.
-- `proteus/metrics`: event recorder and metric calculators.
+- `proteus/metrics`: event recorder, metric calculators, and research-metric stubs.
 - `proteus/experiments`: scenarios, mechanism factory, analysis hooks.
-- `tests`: currently smoke coverage (`tests/test_smoke.py`).
-- `docs/planning`: architecture, ticket plan, checklist, build log.
+- `tests`: unit coverage for RNG, events/clock, accounting, info models, metrics recorder, CLOB matching, plus smoke.
+- `docs/planning`: architecture, ticket plan, checklist, build log, and research notes.
 
 ## Environment
 - Python: `>=3.11,<4.0`
@@ -55,16 +55,16 @@ Keep these stable unless explicitly changing experiment design:
    - `docs/planning/PROTEUS_TICKETS.md`
 
 ## Known Gaps
-- Mechanism implementations (`clob.py`, `fba.py`, `rfq.py`) are placeholders.
-- Agent strategies are minimal/no-op style implementations.
-- Metrics are scaffold-level and not yet fully aligned to roadmap formulas.
-- Test suite only checks smoke wiring.
+- Agent strategies are still minimal/no-op style implementations (PT-008 is next).
+- FBA and RFQ mechanism internals are still placeholders.
+- Runner/analysis stack for large experiment sweeps is still early.
+- Longitudinal identity and lending-market research paths are planned but not implemented (`PT-031+`).
 
 ## Good First Implementation Targets
-1. Implement minimal deterministic CLOB matching path.
-2. Add accounting invariants for fills/cash/inventory.
+1. Implement `PT-008`: MM/informed/noise agent v1 behavior specs.
+2. Add mechanism parity preflight checks (`PT-013`).
 3. Extend scenario presets beyond `clob_smoke_scenario`.
-4. Add mechanism parity tests using common seeds.
+4. Add longitudinal identity scaffolding (`PT-031`) for panel-style research.
 
 ## Operational Rules for Agents
 - Avoid breaking public interfaces without coordinated updates across modules.

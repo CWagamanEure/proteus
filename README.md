@@ -7,7 +7,7 @@ The goal is to run controlled, reproducible experiments where mechanism design i
 - shared seeds and information paths across runs
 - comparable accounting, execution, and metrics outputs
 
-Today, Proteus is in foundation mode: core simulation contracts are in place, and early validation pieces are implemented.
+Today, Proteus is in foundation-plus-baseline mode: core simulation primitives and CLOB baseline matching are implemented, with agent strategy work next.
 
 ## Why Proteus
 
@@ -25,12 +25,15 @@ Implemented now:
 - Fill accounting engine with reconciliation/invariant checks
 - Bounded latent process and heterogeneous signal model
 - Canonical run artifact bundle export (`json`, `jsonl`, `csv`, optional parquet)
+- CLOB matching engine with deterministic price-time behavior (partials/cancels/crossed-book tests)
+- Agent diagnostic schema + research-metric stubs for rationality analysis instrumentation
 - Smoke runner wiring for core module initialization
 
 Still scaffold/placeholder:
-- Mechanism internals (`clob`, `fba`, `rfq`) are mostly stubs
-- Agent strategy logic is minimal
-- Full experiment analysis stack is in progress
+- Agent strategy logic is minimal (PT-008 in progress path)
+- FBA and RFQ internals are still stubs
+- Full experiment runner/analysis sweep stack is in progress
+- Longitudinal identity + lending-market extensions are planned (see M5 / research notes)
 
 ## Quickstart
 
@@ -76,7 +79,7 @@ Core modules:
 - `proteus/core`: config, clock, RNG, events, smoke
 - `proteus/info`: latent process and signal models
 - `proteus/agents`: agent interfaces and baseline agent stubs
-- `proteus/mechanisms`: mechanism interface and mechanism stubs
+- `proteus/mechanisms`: mechanism interface, implemented CLOB baseline, and FBA/RFQ stubs
 - `proteus/execution`: latency and leakage policies
 - `proteus/metrics`: recorder, metric calculations, artifact schema
 - `proteus/experiments`: scenarios, runner, analysis hooks
@@ -85,6 +88,7 @@ Planning docs:
 - `docs/planning/PROTEUS_ARCHITECTURE_ROADMAP.md`
 - `docs/planning/PROTEUS_TICKETS.md`
 - `docs/planning/PROTEUS_BUILD_LOG.md`
+- `docs/planning/PROTEUS_RESEARCH_NOTES.md`
 
 ## Design Principles
 

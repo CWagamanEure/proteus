@@ -73,3 +73,20 @@
 - What broke / risks:
   - Parquet output remains optional and depends on local `pandas` + parquet engine availability.
 - Next ticket: PT-007
+
+### 2026-02-13
+- Ticket: PT-007
+- Definition of done:
+  - Implement deterministic CLOB matching with price-time priority.
+  - Add tests for queue-position effects, partial fills, crossed books, and cancel race behavior.
+  - Keep mechanism wiring intact so CLOB can still be selected by runner/smoke paths.
+- Test(s) to run:
+  - `poetry run pytest -q tests/test_clob_mechanism.py`
+  - `poetry run pytest -q`
+  - `poetry run ruff check .`
+- What changed:
+  - Replaced CLOB stub with a concrete order-book matcher in `proteus/mechanisms/clob.py`.
+  - Added PT-007 regression tests in `tests/test_clob_mechanism.py`.
+- What broke / risks:
+  - Matching/price policy is deterministic and minimal; advanced microstructure details (amend/replace, IOC/FOK, hidden orders) are still out of scope.
+- Next ticket: PT-008

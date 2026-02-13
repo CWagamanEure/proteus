@@ -84,6 +84,7 @@
 ## M1: CLOB Baseline
 
 ### PT-007: CLOB matching engine (price-time priority)
+- Status: complete (2026-02-13)
 - Problem: Baseline mechanism needed before treatment comparisons.
 - Scope: Continuous matching, queue state, partial fills, cancels, and queue-position-aware fills.
 - Acceptance criteria:
@@ -377,3 +378,85 @@
   - Reports include robustness deltas per mechanism/policy.
 - Dependencies: PT-019, PT-025, PT-028
 - Estimate: M
+
+## M5: Longitudinal Identity + Lending Market Research
+
+### PT-031: Persistent agent identity and profile schema
+- Problem: Current runs treat agents as stateless per-episode entities, limiting longitudinal analysis.
+- Scope: Add stable `agent_uid` and versioned profile schema separate from per-run instance IDs.
+- Acceptance criteria:
+  - Agent identity fields persist across repeated runs in artifact metadata.
+  - Profile schema includes strategy family, risk envelope, and capital baseline.
+  - Identity/profile schema version is explicit and validated at load time.
+- Dependencies: PT-006, PT-008
+- Estimate: M
+
+### PT-032: Cross-run state carryover engine
+- Problem: There is no controlled way to retain agent state between runs.
+- Scope: Implement carryover policies (`hard_reset`, `capital_only`, `full_carryover`) with deterministic state transitions.
+- Acceptance criteria:
+  - Carryover policy selectable per experiment config.
+  - Same seed + same carryover policy reproduces identical multi-run trajectories.
+  - State snapshots are serialized and replayable between episodes.
+- Dependencies: PT-031
+- Estimate: L
+
+### PT-033: Longitudinal panel artifact bundle + metrics
+- Problem: Existing artifacts are run-local and do not support panel regressions.
+- Scope: Extend output schema for panel indexing and longitudinal metrics.
+- Acceptance criteria:
+  - Artifacts include run index, cohort ID, agent UID, and carryover policy metadata.
+  - Panel-ready exports (agent-run rows) are emitted in canonical schema.
+  - Longitudinal metrics include persistence and regime-shift diagnostics.
+- Dependencies: PT-031, PT-032
+- Estimate: M
+
+### PT-034: Credit account and collateral ledger abstractions
+- Problem: Lending behavior cannot be modeled with spot-only accounting primitives.
+- Scope: Add credit account model (`cash`, `collateral`, `debt`, `health_factor`) and ledger events.
+- Acceptance criteria:
+  - Credit account state reconciles with spot ledger and settlement logic.
+  - Borrow/repay/collateral transfer events are versioned in event schema.
+  - Invariant checks include debt conservation and collateral consistency.
+- Dependencies: PT-004, PT-022
+- Estimate: L
+
+### PT-035: Lending mechanism interface + baseline implementation
+- Problem: No mechanism contract exists for lending market interactions.
+- Scope: Add mechanism interface for borrow/lend requests, matching/allocation, and repayment handling.
+- Acceptance criteria:
+  - Baseline lending mechanism runs with deterministic matching/allocation policy.
+  - Borrow/lend event flow is integrated into runner and recorder.
+  - Edge cases (insufficient collateral, partial fills, expired offers) are tested.
+- Dependencies: PT-003, PT-034
+- Estimate: L
+
+### PT-036: Interest-rate and liquidation policy engine
+- Problem: Credit dynamics require explicit rate and liquidation rules to be economically meaningful.
+- Scope: Implement pluggable interest-rate curves and deterministic liquidation policies.
+- Acceptance criteria:
+  - Interest accrual is reproducible and auditable at event level.
+  - Liquidation triggers are deterministic and parameterized.
+  - Policy changes are sweepable without modifying mechanism code.
+- Dependencies: PT-034, PT-035
+- Estimate: M
+
+### PT-037: Lending stress and invariant regression suite
+- Problem: Credit systems are fragile without permanent regression coverage.
+- Scope: Add deterministic scenarios for utilization spikes, collateral shocks, and liquidation cascades.
+- Acceptance criteria:
+  - CI runs lending sanity suite with golden outputs.
+  - Failures identify violated invariant class and scenario ID.
+  - Reports include leverage/liquidation summary diagnostics.
+- Dependencies: PT-019, PT-035, PT-036
+- Estimate: M
+
+### PT-038: Integrated spot + lending experiment pack
+- Problem: Research comparisons require joint-market experiments, not isolated subsystems.
+- Scope: Build scenario sweeps combining execution mechanism choice with leverage/credit settings.
+- Acceptance criteria:
+  - Common-seed comparisons run across spot-only vs leveraged variants.
+  - Outputs include market quality + credit risk metrics with CIs.
+  - Repro command and runbook entries are documented.
+- Dependencies: PT-018, PT-033, PT-037
+- Estimate: L
