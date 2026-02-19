@@ -109,3 +109,42 @@
   - Agent policies are intentionally simple and event-payload-driven; richer state estimation and execution-awareness are deferred to later tickets.
   - Current run loop integration still needs to exercise these agents in full scenario sweeps.
 - Next ticket: PT-009
+
+### 2026-02-13
+- Ticket: PT-009
+- Definition of done:
+  - Implement configurable submission/ack/fill latency primitives with reproducible seeded behavior.
+  - Implement explicit mechanism leakage policy with public/private field visibility mapping.
+  - Add parity tests ensuring shared default latency/leakage primitives across CLOB/FBA/RFQ.
+- Test(s) to run:
+  - `poetry run pytest -q tests/test_execution_models.py`
+  - `poetry run pytest -q`
+  - `poetry run ruff check .`
+- What changed:
+  - Extended `proteus/execution/latency.py` with latency profiles, ack-delay support, configurable seeded model, and default parity builder.
+  - Extended `proteus/execution/leakage.py` with mechanism-aware visibility/payload filtering and default/private policy builders.
+  - Added PT-009 regression coverage in `tests/test_execution_models.py`.
+- What broke / risks:
+  - Leakage policy is field-based and event-payload driven; richer channel semantics (for example venue-specific metadata redaction) remain future work.
+  - Latency is modeled as bounded additive jitter; heavier-tailed queue/network delay models are not yet implemented.
+- Next ticket: PT-010
+
+### 2026-02-19
+- Ticket: PT-010
+- Definition of done:
+  - Implement CLOB calibration harness that searches MM parameter regimes under low informed intensity.
+  - Generate calibration report with selected regime and explicit rationale.
+  - Include sensitivity diagnostics across informed activity and latency grids.
+- Test(s) to run:
+  - `poetry run pytest -q tests/test_clob_calibration.py`
+  - `poetry run pytest -q`
+  - `poetry run ruff check .`
+  - `python -m proteus.experiments.calibrate_clob --out-dir /tmp/proteus-pt010-check --duration-ms 2000 --step-ms 100`
+- What changed:
+  - Added calibration harness in `proteus/experiments/calibration.py` with candidate search, stability checks, and sensitivity sweeps.
+  - Added CLI entrypoint in `proteus/experiments/calibrate_clob.py`.
+  - Added regression tests in `tests/test_clob_calibration.py`.
+- What broke / risks:
+  - Calibration uses a lightweight event loop and heuristic objective for regime selection; methodology can be refined when PT-011 experiment pack formalizes endpoints.
+  - Runtime scales with grid size and seed count; wider sweeps may require batching controls.
+- Next ticket: PT-011

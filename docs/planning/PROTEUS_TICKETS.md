@@ -106,6 +106,7 @@
 - Estimate: L
 
 ### PT-009: Execution latency + leakage primitives
+- Status: complete (2026-02-13)
 - Problem: Execution assumptions must be common across mechanisms.
 - Scope: Implement configurable submission/ack/fill latency and explicit leakage model.
 - Acceptance criteria:
@@ -116,6 +117,7 @@
 - Estimate: M
 
 ### PT-010: CLOB calibration harness
+- Status: complete (2026-02-19)
 - Problem: Need calibrated baseline where MM survives under low informed intensity.
 - Scope: Build parameter search and diagnostics for survival region.
 - Acceptance criteria:

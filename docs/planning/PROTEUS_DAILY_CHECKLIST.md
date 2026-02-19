@@ -18,3 +18,6 @@ Use this once per day. Keep it to 10-20 minutes of planning max.
 - [x] PT-006
 - [x] PT-007
 - [x] PT-008
+- [x] PT-009
+- [x] PT-010
+- [ ] PT-011
