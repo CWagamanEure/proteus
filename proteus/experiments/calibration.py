@@ -45,7 +45,7 @@ class CalibrationSearchConfig:
 
     # Sensitivity diagnostics required by PT-010.
     informed_activity_grid: tuple[float, ...] = (0.03, 0.06, 0.12, 0.2)
-    latency_submission_grid_ms: tuple[int, ...] = (1, 3, 7, 15)
+    latency_submission_grid_ms: tuple[int, ...] = (1, 25, 100, 250)
 
     criteria: SurvivalCriteria = field(default_factory=SurvivalCriteria)
 
@@ -174,6 +174,7 @@ def run_clob_calibration(
     report_path = output_dir / report_name
     report_payload = asdict(report)
     report_payload["selected_regime"] = asdict(report.selected_regime)
+    report_payload["report_path"] = str(report_path)
     report_path.write_text(json.dumps(report_payload, indent=2, sort_keys=True), encoding="utf-8")
 
     return CalibrationReport(
@@ -249,7 +250,20 @@ def _simulate_one(
     event_seq = 0
 
     ts = 0
-    while ts <= duration_ms or pending_orders or pending_fills:
+    next_decision_ts = 0
+    while True:
+        candidate_ts: list[int] = []
+        if next_decision_ts <= duration_ms:
+            candidate_ts.append(next_decision_ts)
+        if pending_orders:
+            candidate_ts.append(min(pending_orders))
+        if pending_fills:
+            candidate_ts.append(min(pending_fills))
+        if not candidate_ts:
+            break
+
+        ts = min(candidate_ts)
+
         for fill in pending_fills.pop(ts, []):
             recorder.record_fill(fill)
             event_seq += 1
@@ -287,10 +301,10 @@ def _simulate_one(
             )
 
         for fill in mechanism.clear(ts):
-            fill_due = _align_to_step(ts + latency.fill_delay_ms("clob"), step_ms)
+            fill_due = ts + latency.fill_delay_ms("clob")
             pending_fills[fill_due].append(fill)
 
-        if ts <= duration_ms:
+        if ts == next_decision_ts and ts <= duration_ms:
             last_truth = latent.step(step_ms)
             event_seq += 1
             recorder.record(
@@ -348,10 +362,10 @@ def _simulate_one(
 
             submit_delay = latency.submission_delay_ms("clob") + latency.ack_delay_ms("clob")
             for intent in intents:
-                due_ts = _align_to_step(ts + max(step_ms, submit_delay), step_ms)
+                due_ts = ts + submit_delay
                 pending_orders[due_ts].append(intent)
 
-        ts += step_ms
+            next_decision_ts += step_ms
 
     bundle = recorder.build_bundle(
         scenario_id="pt010-calibration",
@@ -383,6 +397,30 @@ def _simulate_one(
         mm_abs_inventory=mm_abs_inventory,
         market_spread_mean=market_spread_mean,
         stable=stable,
+    )
+
+
+def simulate_clob_regime(
+    *,
+    seed: int,
+    duration_ms: int,
+    step_ms: int,
+    regime: CandidateRegime,
+    informed_activity_prob: float,
+    submission_latency_ms: int,
+    criteria: SurvivalCriteria | None = None,
+) -> RunMetrics:
+    """
+    Public wrapper for one calibrated CLOB sim run
+    """
+    return _simulate_one(
+        seed=seed,
+        duration_ms=duration_ms,
+        step_ms=step_ms,
+        regime=regime,
+        informed_activity_prob=informed_activity_prob,
+        submission_latency_ms=submission_latency_ms,
+        criteria=criteria or SurvivalCriteria(),
     )
 
 

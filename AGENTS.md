@@ -53,6 +53,7 @@ Keep these stable unless explicitly changing experiment design:
 5. Update planning docs when completing meaningful ticketed work:
    - `docs/planning/PROTEUS_BUILD_LOG.md`
    - `docs/planning/PROTEUS_TICKETS.md`
+6. Test quality standard: write tests to enforce correctness requirements and invariants, not to simply confirm the current implementation behavior.
 
 ## Known Gaps
 - Agent strategies are still minimal/no-op style implementations (PT-008 is next).

@@ -2,7 +2,12 @@ from __future__ import annotations
 
 import json
 
-from proteus.experiments.calibration import CalibrationSearchConfig, run_clob_calibration
+from proteus.experiments.calibration import (
+    CalibrationSearchConfig,
+    CandidateRegime,
+    run_clob_calibration,
+    simulate_clob_regime,
+)
 
 
 def test_calibration_generates_report_with_selected_regime(tmp_path) -> None:
@@ -26,6 +31,7 @@ def test_calibration_generates_report_with_selected_regime(tmp_path) -> None:
     assert "selected_regime" in payload
     assert "baseline_rationale" in payload
     assert "sensitivity_rows" in payload
+    assert payload["report_path"] == report.report_path
 
 
 def test_sensitivity_rows_cover_grid(tmp_path) -> None:
@@ -39,3 +45,27 @@ def test_sensitivity_rows_cover_grid(tmp_path) -> None:
 
     report = run_clob_calibration(config, out_dir=tmp_path)
     assert len(report.sensitivity_rows) == 9
+
+
+def test_large_submission_latency_changes_simulation_outputs() -> None:
+    regime = CandidateRegime(h0=0.012, kappa_inventory=0.004, min_half_spread=0.002)
+
+    low_latency = simulate_clob_regime(
+        seed=7,
+        duration_ms=2_000,
+        step_ms=100,
+        regime=regime,
+        informed_activity_prob=0.06,
+        submission_latency_ms=1,
+    )
+    high_latency = simulate_clob_regime(
+        seed=7,
+        duration_ms=2_000,
+        step_ms=100,
+        regime=regime,
+        informed_activity_prob=0.06,
+        submission_latency_ms=250,
+    )
+
+    assert low_latency.mm_pnl != high_latency.mm_pnl
+    assert low_latency.market_spread_mean != high_latency.market_spread_mean

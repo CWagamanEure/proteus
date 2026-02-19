@@ -128,6 +128,7 @@
 - Estimate: M
 
 ### PT-011: CLOB baseline experiment pack
+- Status: complete (2026-02-19)
 - Problem: Phase 1 roadmap requires benchmark outputs.
 - Scope: Scenario definitions, Monte Carlo runner, CI summaries for baseline contrasts.
 - Acceptance criteria:
@@ -232,6 +233,18 @@
   - Runbook includes troubleshooting and expected runtime.
 - Dependencies: PT-011, PT-014, PT-016
 - Estimate: S
+
+### PT-039: Deterministic parallel Monte Carlo execution
+- Problem: Larger sweep workloads are slow in single-process mode and discourage adequate repetition counts.
+- Scope: Add process-level parallel execution for repetition/scenario batches while preserving deterministic seed partitioning and artifact reproducibility.
+- Acceptance criteria:
+  - Runner supports configurable worker count for batch execution.
+  - Same config + seed set produces identical aggregated outputs regardless of worker count.
+  - Failure handling/reporting is deterministic and includes per-worker run IDs.
+  - Documentation includes guidance on when to use parallel mode and expected speedups.
+- Dependencies: PT-011
+- Estimate: M
+- Execution note: prioritize after PT-011 and before large sweep tickets (`PT-014`, `PT-016`) to reduce wall-clock runtime without breaking parity.
 
 ## Issues found in the current roadmap (and fixes)
 

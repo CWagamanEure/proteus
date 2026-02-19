@@ -148,3 +148,23 @@
   - Calibration uses a lightweight event loop and heuristic objective for regime selection; methodology can be refined when PT-011 experiment pack formalizes endpoints.
   - Runtime scales with grid size and seed count; wider sweeps may require batching controls.
 - Next ticket: PT-011
+
+### 2026-02-19
+- Ticket: PT-011
+- Definition of done:
+  - Implement CLOB baseline experiment pack runner that consumes the calibrated regime and executes Monte Carlo grid sweeps.
+  - Emit confidence intervals and effect-size summaries for baseline contrasts.
+  - Provide reproducible CLI command and artifact outputs (JSON + CSV).
+- Test(s) to run:
+  - `poetry run pytest -q tests/test_baseline_pack.py tests/test_clob_calibration.py`
+  - `poetry run pytest -q`
+  - `poetry run ruff check .`
+  - `python -m proteus.experiments.run_clob_baseline_pack --out-dir /tmp/proteus-pt011-final-check --repetitions 6 --duration-ms 2000 --step-ms 100`
+- What changed:
+  - Added baseline pack runner in `proteus/experiments/baseline_pack.py` with calibration handoff, seeded repetitions, CI/effect-size summaries, and CSV/JSON artifact writing.
+  - Added CLI entrypoint `proteus/experiments/run_clob_baseline_pack.py`.
+  - Expanded regression coverage in `tests/test_baseline_pack.py` and `tests/test_clob_calibration.py` for seed metadata fidelity, report path serialization, latency sensitivity behavior, and output invariants.
+- What broke / risks:
+  - Latency sensitivity for very small delays can be muted when delays are below the decision step resolution; default latency grids now include multi-step values to preserve diagnostic signal.
+  - Metric summaries remain tied to current simplified agent/mechanism dynamics and should be interpreted as baseline diagnostics before cross-mechanism parity work.
+- Next ticket: PT-012
