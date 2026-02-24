@@ -207,11 +207,7 @@ class FBAMechanism(Mechanism):
             return ((lower + upper) / 2.0, max_matched)
 
         min_imbalance = min(candidate.imbalance for candidate in best)
-        best = [
-            candidate
-            for candidate in best
-            if abs(candidate.imbalance - min_imbalance) <= _EPS
-        ]
+        best = [candidate for candidate in best if abs(candidate.imbalance - min_imbalance) <= _EPS]
         lower = min(candidate.price for candidate in best)
         upper = max(candidate.price for candidate in best)
         return ((lower + upper) / 2.0, max_matched)
