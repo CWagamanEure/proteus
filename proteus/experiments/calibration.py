@@ -36,9 +36,9 @@ class CalibrationSearchConfig:
     step_ms: int = 100
 
     # Search knobs under low informed activity and low latency.
-    mm_h0_grid: tuple[float, ...] = (0.008, 0.012, 0.016, 0.02)
-    mm_kappa_grid: tuple[float, ...] = (0.004, 0.008, 0.012)
-    mm_min_half_spread_grid: tuple[float, ...] = (0.002, 0.003, 0.004)
+    mm_h0_grid: tuple[float, ...] = (0.008, 0.012, 0.016, 0.02, 0.03, 0.04)
+    mm_kappa_grid: tuple[float, ...] = (0.004, 0.008, 0.012, 0.02, 0.03)
+    mm_min_half_spread_grid: tuple[float, ...] = (0.002, 0.003, 0.004, 0.006, 0.008)
 
     baseline_informed_activity_prob: float = 0.06
     baseline_submission_latency_ms: int = 1

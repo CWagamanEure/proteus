@@ -14,7 +14,7 @@ def build_mechanism(scenario: ScenarioConfig):
     if scenario.mechanism.name == "clob":
         return CLOBMechanism()
     if scenario.mechanism.name == "fba":
-        return FBAMechanism()
+        return FBAMechanism(**dict(scenario.mechanism.params))
     if scenario.mechanism.name == "rfq":
         return RFQMechanism()
     raise ValueError(f"Unsupported mechanism: {scenario.mechanism.name}")

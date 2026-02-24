@@ -52,8 +52,8 @@ def run_clob_baseline_pack(
 
     cal_cfg = CalibrationSearchConfig(
         seeds=seeds,
-        duration_ms=config.calibration.duration_ms,
-        step_ms=config.calibration.step_ms,
+        duration_ms=config.duration_ms,
+        step_ms=config.step_ms,
         mm_h0_grid=config.calibration.mm_h0_grid,
         mm_kappa_grid=config.calibration.mm_kappa_grid,
         mm_min_half_spread_grid=config.calibration.mm_min_half_spread_grid,
@@ -103,6 +103,8 @@ def run_clob_baseline_pack(
     config_payload = asdict(config)
     config_payload["effective_repetition_seeds"] = list(seeds)
     config_payload["calibration"]["seeds"] = list(seeds)
+    config_payload["calibration"]["duration_ms"] = config.duration_ms
+    config_payload["calibration"]["step_ms"] = config.step_ms
 
     payload = {
         "config": config_payload,

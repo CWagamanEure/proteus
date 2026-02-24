@@ -64,6 +64,8 @@ def test_baseline_pack_records_effective_seed_metadata(tmp_path) -> None:
     calibration_seeds = payload["config"]["calibration"]["seeds"]
     assert len(effective) == config.repetitions
     assert effective == calibration_seeds
+    assert payload["config"]["calibration"]["duration_ms"] == config.duration_ms
+    assert payload["config"]["calibration"]["step_ms"] == config.step_ms
 
 
 def test_baseline_pack_latency_grid_shows_metric_divergence_for_multi_step_delay(
