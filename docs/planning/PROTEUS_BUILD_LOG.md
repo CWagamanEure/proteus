@@ -168,3 +168,41 @@
   - Latency sensitivity for very small delays can be muted when delays are below the decision step resolution; default latency grids now include multi-step values to preserve diagnostic signal.
   - Metric summaries remain tied to current simplified agent/mechanism dynamics and should be interpreted as baseline diagnostics before cross-mechanism parity work.
 - Next ticket: PT-012
+
+### 2026-02-26
+- Ticket: PT-012
+- Definition of done:
+  - Implement FBA batch collection and fixed-interval clears.
+  - Implement uniform clearing price selection with configurable tie policy.
+  - Implement selectable allocation policies and deterministic fixtures/tests.
+- Test(s) to run:
+  - `poetry run pytest -q tests/test_fba_mechanism.py`
+  - `poetry run pytest -q`
+  - `poetry run ruff check .`
+- What changed:
+  - Added `FBAMechanism` in `proteus/mechanisms/fba.py` with batch interval clearing, uniform-price selection, tie policies, and allocation policies.
+  - Added PT-012 regression coverage in `tests/test_fba_mechanism.py`.
+  - Wired FBA mechanism construction in `proteus/experiments/runner.py`.
+- What broke / risks:
+  - FBA implementation is baseline-only (no advanced auction priority/rounding variants beyond current selectable policies).
+  - Batch clearing emits fills only; richer batch-level auction events/diagnostics can be added later if analysis requires them.
+- Next ticket: PT-013
+
+### 2026-02-26
+- Ticket: PT-013
+- Definition of done:
+  - Add parity preflight checks for cross-mechanism scenario comparisons.
+  - Fail with exact differing config keys when parity contract is violated.
+  - Integrate preflight into mechanism runner path and cover with tests.
+- Test(s) to run:
+  - `poetry run pytest -q tests/test_mechanism_parity.py`
+  - `poetry run pytest -q`
+  - `poetry run ruff check .`
+- What changed:
+  - Added parity diff/assert helpers in `proteus/experiments/parity.py`.
+  - Integrated optional parity preflight into `proteus/experiments/runner.py` via `build_mechanism(..., parity_reference=...)`.
+  - Added PT-013 regression coverage in `tests/test_mechanism_parity.py`.
+- What broke / risks:
+  - Parity contract intentionally ignores `scenario_id` and `mechanism.*`; future experiments may need a stricter/parameterized parity policy.
+  - Diff output is key-path based and does not currently summarize value deltas beyond path names.
+- Next ticket: PT-014

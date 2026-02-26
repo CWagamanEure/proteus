@@ -141,6 +141,7 @@
 ## M2: Frequent Batch Auction
 
 ### PT-012: FBA mechanism implementation
+- Status: complete (2026-02-26)
 - Problem: Phase 2 requires auction clearing with configurable interval/allocation.
 - Scope: Batch collection, uniform clearing, tie/allocation policies.
 - Acceptance criteria:
@@ -151,6 +152,7 @@
 - Estimate: L
 
 ### PT-013: CLOB vs FBA parity test harness
+- Status: complete (2026-02-26)
 - Problem: Comparisons are invalid without treatment parity checks.
 - Scope: Automated assertions that all non-mechanism parameters are identical between runs.
 - Acceptance criteria:
@@ -245,6 +247,18 @@
 - Dependencies: PT-011
 - Estimate: M
 - Execution note: prioritize after PT-011 and before large sweep tickets (`PT-014`, `PT-016`) to reduce wall-clock runtime without breaking parity.
+
+### PT-040: Mesa-style step adapter layer (optional ergonomics)
+- Problem: Classroom and library users may expect `Model.step()`/`Agent.step()` interfaces, while Proteus uses intent/mechanism/event contracts.
+- Scope: Add a thin compatibility adapter exposing step-style APIs without changing core architecture or mechanism separation.
+- Acceptance criteria:
+  - Adapter can run one simulation tick via `model.step()` and route through existing intent -> mechanism -> fills -> recorder flow.
+  - Adapter exposes per-agent step hooks that map to existing agent intent generation interfaces.
+  - Determinism parity check confirms adapter-mode and native-runner mode produce identical artifacts for identical config/seeds.
+  - Documentation clearly marks adapter as optional UX layer, not the canonical core contract.
+- Dependencies: PT-003, PT-011, PT-020
+- Estimate: S
+- Execution note: implement only if needed for teaching/library ergonomics; keep all mechanism logic in existing modules.
 
 ## Issues found in the current roadmap (and fixes)
 

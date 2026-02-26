@@ -24,5 +24,5 @@ def build_mechanism(
     if scenario.mechanism.name == "fba":
         return FBAMechanism(**dict(scenario.mechanism.params))
     if scenario.mechanism.name == "rfq":
-        return RFQMechanism()
+        return RFQMechanism(**dict(scenario.mechanism.params))
     raise ValueError(f"Unsupported mechanism: {scenario.mechanism.name}")
