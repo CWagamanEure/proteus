@@ -163,6 +163,7 @@
 - Estimate: M
 
 ### PT-014: Phase 2 sweep + analysis
+- Status: complete (2026-02-26)
 - Problem: Need treatment contrast across batch intervals.
 - Scope: Execute `Delta in {50,100,250,500,1000}` sweep with common seeds.
 - Acceptance criteria:
@@ -175,6 +176,7 @@
 ## M3: RFQ + Optional Dual-Flow
 
 ### PT-015: RFQ mechanism implementation
+- Status: complete (2026-02-27)
 - Problem: Phase 3 requires private quote/accept pipeline.
 - Scope: RFQ request, dealer response, TTL expiry, acceptance path.
 - Acceptance criteria:
@@ -185,6 +187,7 @@
 - Estimate: L
 
 ### PT-016: RFQ scenario sweeps + analysis
+- Status: complete (2026-03-06)
 - Problem: Need protection vs price-discovery tradeoff measurement.
 - Scope: Sweep TTL/latency/dealer competition parameters and compare against baseline.
 - Acceptance criteria:
@@ -195,6 +198,7 @@
 - Estimate: M
 
 ### PT-017: Dual-flow batch (optional, gated)
+- Status: complete (2026-03-06)
 - Problem: Advanced mechanism should not begin before parity in earlier phases.
 - Scope: Implement only if M1-M3 parity gates pass.
 - Acceptance criteria:

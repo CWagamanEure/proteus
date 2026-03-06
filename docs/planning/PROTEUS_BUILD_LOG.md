@@ -206,3 +206,82 @@
   - Parity contract intentionally ignores `scenario_id` and `mechanism.*`; future experiments may need a stricter/parameterized parity policy.
   - Diff output is key-path based and does not currently summarize value deltas beyond path names.
 - Next ticket: PT-014
+
+### 2026-02-26
+- Ticket: PT-014
+- Definition of done:
+  - Run CLOB vs FBA delta sweep over configured batch intervals with shared seeds.
+  - Emit AS loss/spread/fill-delay/RMSE comparison outputs with CI summaries.
+  - Persist versioned JSON + CSV artifacts for phase-2 analysis.
+- Test(s) to run:
+  - `poetry run pytest -q tests/test_fba_phase2_sweep.py`
+  - `poetry run pytest -q`
+  - `poetry run ruff check .`
+- What changed:
+  - Added phase-2 sweep module in `proteus/experiments/fba_phase2_sweep.py` with calibrated baseline handoff and delta-grid comparisons.
+  - Added CLI entrypoint `proteus/experiments/run_fba_phase2_sweep.py`.
+  - Added PT-014 regression tests in `tests/test_fba_phase2_sweep.py`.
+- What broke / risks:
+  - Report-level significance notes are heuristic summaries and should not be treated as formal hypothesis-test output.
+  - Runtime grows with repetition count and delta grid size; wider sweeps may require PT-039 parallel execution.
+- Next ticket: PT-015
+
+### 2026-02-27
+- Ticket: PT-015
+- Definition of done:
+  - Implement RFQ request -> quote -> accept pipeline.
+  - Enforce request/quote TTL and response latency constraints.
+  - Support multi-dealer quote competition and request/quote cancellation handling.
+- Test(s) to run:
+  - `poetry run pytest -q tests/test_rfq_mechanism.py`
+  - `poetry run pytest -q`
+  - `poetry run ruff check .`
+- What changed:
+  - Replaced RFQ stub with concrete implementation in `proteus/mechanisms/rfq.py`.
+  - Added RFQ intent dataclasses and queued-action clearing flow for deterministic request/quote/accept processing.
+  - Added PT-015 regression coverage in `tests/test_rfq_mechanism.py`.
+  - Updated mechanism factory wiring in `proteus/experiments/runner.py` to pass RFQ params through scenario config.
+- What broke / risks:
+  - Current RFQ implementation is baseline and intentionally minimal (single-accept closure, no partial multi-accept lifecycle).
+  - Leakage/privacy validation is currently indirect via existing leakage policy; deeper RFQ event-level privacy assertions remain follow-on work.
+- Next ticket: PT-016
+
+### 2026-03-06
+- Ticket: PT-016
+- Definition of done:
+  - Implement RFQ sweep runner over request TTL, response latency, and dealer-count grids with shared seeds.
+  - Compare RFQ outputs against calibrated CLOB baseline and emit CI/effect-style delta summaries.
+  - Emit tradeoff frontier artifacts and reproducibility metadata for sweep reports.
+- Test(s) to run:
+  - `poetry run pytest -q tests/test_rfq_phase3_sweep.py`
+  - `poetry run pytest -q`
+  - `poetry run ruff check .`
+- What changed:
+  - Added PT-016 sweep/analysis module in `proteus/experiments/rfq_phase3_sweep.py` with calibrated baseline handoff, deterministic RFQ simulation, CI summaries, and Pareto-style frontiers.
+  - Added CLI entrypoint `proteus/experiments/run_rfq_phase3_sweep.py`.
+  - Added PT-016 regression coverage in `tests/test_rfq_phase3_sweep.py` including artifacts, reproducibility, frontier correctness, config validation, and CLI smoke checks.
+- What broke / risks:
+  - RFQ sweep simulation uses a stylized request/quote/accept flow intended for scenario-comparison baselines; richer requestor/dealer strategy models remain future work.
+  - Frontier significance remains CI-based summary diagnostics rather than formal hypothesis-test inference.
+- Next ticket: PT-017
+
+### 2026-03-06
+- Ticket: PT-017
+- Definition of done:
+  - Enforce PT-014/PT-016 gate checks before allowing dual-flow mechanism construction.
+  - Implement dual-flow batch mechanism with separate buy/sell clears and no maker-maker matching.
+  - Emit a comparative phase-4 report only after gate satisfaction.
+- Test(s) to run:
+  - `poetry run pytest -q tests/test_dual_flow_batch_mechanism.py tests/test_dual_flow_phase4_report.py tests/test_experiments_cli.py`
+  - `poetry run pytest -q`
+  - `poetry run ruff check .`
+- What changed:
+  - Added `DualFlowBatchMechanism` in `proteus/mechanisms/dual_flow_batch.py` with maker/taker segregation, separate flow clears, and deterministic matching.
+  - Added dual-flow gate enforcement in `proteus/experiments/runner.py` for mechanism name `dual_flow_batch` requiring `scenario.params.dual_flow_gate` with `phase2_passed=True` and `phase3_passed=True`.
+  - Added gated comparative report runner in `proteus/experiments/dual_flow_phase4_report.py` and CLI entrypoint `proteus/experiments/run_dual_flow_phase4_report.py`.
+  - Extended unified CLI `proteus-exp` with `run phase4` and required gate-report arguments.
+  - Added PT-017 regression coverage in `tests/test_dual_flow_batch_mechanism.py`, `tests/test_dual_flow_phase4_report.py`, and extended `tests/test_experiments_cli.py`.
+- What broke / risks:
+  - Dual-flow gating currently keys on presence of non-empty PT-014/PT-016 report rows; stricter statistical quality gates (for example CI/power thresholds) remain future policy work.
+  - Dual-flow comparative fixture is a deterministic sanity fixture, not a full-scale economic study harness.
+- Next ticket: PT-018

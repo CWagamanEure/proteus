@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from collections import defaultdict
+from collections.abc import Iterable, Iterator
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from random import Random
@@ -82,6 +83,7 @@ def run_clob_calibration(
     *,
     out_dir: str | Path | None = None,
     report_name: str = "clob_calibration_report.json",
+    show_progress: bool = False,
 ) -> CalibrationReport:
     candidates = [
         CandidateRegime(h0=h0, kappa_inventory=kappa, min_half_spread=min_half_spread)
@@ -93,7 +95,11 @@ def run_clob_calibration(
     scored: list[tuple[float, CandidateRegime, list[RunMetrics]]] = []
     stable_count = 0
 
-    for regime in candidates:
+    for regime in _with_progress(
+        candidates,
+        label="PT-010 calibration candidates",
+        enabled=show_progress,
+    ):
         runs = [
             _simulate_one(
                 seed=seed,
@@ -185,6 +191,33 @@ def run_clob_calibration(
         stable_candidates_found=report.stable_candidates_found,
         report_path=str(report_path),
     )
+
+
+def _with_progress(
+    items: Iterable[CandidateRegime],
+    *,
+    label: str,
+    enabled: bool,
+) -> Iterator[CandidateRegime]:
+    materialized = list(items)
+    if not enabled:
+        yield from materialized
+        return
+
+    try:
+        from tqdm.auto import tqdm  # type: ignore[import-not-found]
+
+        yield from tqdm(materialized, desc=label, unit="candidate")
+        return
+    except Exception:
+        pass
+
+    total = len(materialized)
+    print(f"{label}: starting {total} candidate(s)")
+    for idx, item in enumerate(materialized, start=1):
+        if idx == 1 or idx == total or idx % 10 == 0:
+            print(f"{label}: {idx}/{total}")
+        yield item
 
 
 def _simulate_one(

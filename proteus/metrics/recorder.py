@@ -338,7 +338,7 @@ class Recorder:
         for event in events_sorted:
             if event.event_type is EventType.NEWS:
                 raw = event.payload.get("p_t")
-                if isinstance(raw, (int, float)):
+                if isinstance(raw, int | float):
                     truth_series.append((event.ts_ms, float(raw)))
 
         errors: list[float] = []
@@ -353,7 +353,7 @@ class Recorder:
         for event in quote_events:
             bid = event.payload.get("bid")
             ask = event.payload.get("ask")
-            if isinstance(bid, (int, float)) and isinstance(ask, (int, float)) and ask >= bid:
+            if isinstance(bid, int | float) and isinstance(ask, int | float) and ask >= bid:
                 spreads.append(float(ask) - float(bid))
 
         if not spreads:
@@ -365,7 +365,7 @@ class Recorder:
         for event in quote_events:
             bid_size = event.payload.get("bid_size")
             ask_size = event.payload.get("ask_size")
-            if isinstance(bid_size, (int, float)) and isinstance(ask_size, (int, float)):
+            if isinstance(bid_size, int | float) and isinstance(ask_size, int | float):
                 depths.append(float(bid_size) + float(ask_size))
         if not depths:
             return nan

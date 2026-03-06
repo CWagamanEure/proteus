@@ -6,6 +6,9 @@ authors = ["Cory Wagamaneure <cory.wagamaneure@gmail.com>"]
 readme = "README.md"
 packages = [{ include = "proteus" }]
 
+[tool.poetry.scripts]
+proteus-exp = "proteus.experiments.cli:main"
+
 [tool.poetry.dependencies]
 python = ">=3.11,<4.0"
 
